@@ -1,0 +1,27 @@
+# PDF 手册问答桌面程序（llama.cpp + GGUF）运行依赖
+#
+# 安装：pip install -r requirements.txt
+#
+# 这里只列代码里直接 import 的第三方包，传递依赖（transformers、huggingface-hub、
+# numpy、scipy 等）由 pip 自动解析。如需完全锁定版本，在装好后执行 pip freeze。
+#
+# 除 pip 包外，程序还依赖以下几份本地文件（不通过 pip 获取）：
+#   llama/llama-server.exe        llama.cpp 官方预编译二进制（build 12032）
+#   model/gguf/*.gguf             生成模型，Q4_K_M 量化
+#   model/bge-small-zh-v1.5/      中文向量模型
+#   userguide.pdf                 被问答的手册
+
+# ---- 桌面界面 ----
+PySide6-Essentials==6.12.0
+
+# ---- PDF 解析与页面渲染 ----
+pymupdf==2.0
+
+# ---- 检索：向量模型与近邻搜索 ----
+sentence-transformers==5.3.0
+torch==2.11.0
+scikit-learn==1.8.0
+
+# ---- 与 llama-server 通信、进程管理 ----
+requests==2.33.0
+psutil==7.2.2

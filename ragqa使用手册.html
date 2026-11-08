@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ragqa 使用手册</title>
+<style>
+  :root{
+    --bg:#f4f6f8;
+    --card:#ffffff;
+    --text:#22272e;
+    --muted:#6b7684;
+    --line:#e3e8ee;
+    --accent:#0b6bcb;
+    --accent-soft:#eaf2fd;
+    --warn-soft:#fff8e6;
+    --warn-line:#e8a33d;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font:16px/1.78 system-ui,-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:40px 24px 72px}
+
+  header h1{font-size:30px;line-height:1.35;margin:0 0 14px;letter-spacing:.5px}
+  .lead{color:var(--muted);margin:0 0 10px}
+  .lead strong{color:var(--text)}
+  .meta{color:var(--muted);font-size:13px;margin-top:14px}
+
+  .toc{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 22px 18px;margin:26px 0 34px;
+  }
+  .toc h2{
+    font-size:14px;letter-spacing:2px;color:var(--muted);margin:0 0 10px;
+    border:0;padding:0;font-weight:600;
+  }
+  .toc ol{
+    margin:0;padding:0;list-style:none;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:8px 18px;
+  }
+  .toc a{
+    color:var(--accent);text-decoration:none;font-size:14px;
+    display:block;padding:4px 0;border-bottom:1px dashed transparent;
+  }
+  .toc a:hover{border-bottom-color:var(--accent)}
+
+  main{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:6px 38px 34px;
+  }
+  section{padding-top:26px;margin-top:26px;border-top:1px solid var(--line)}
+  section:first-child{border-top:0;margin-top:0}
+  h2{
+    font-size:21px;line-height:1.4;margin:0 0 14px;padding-left:12px;
+    border-left:4px solid var(--accent);
+  }
+  p{margin:12px 0}
+  ul,ol{padding-left:24px;margin:12px 0}
+  li{margin:7px 0}
+  strong{font-weight:600}
+  a{color:var(--accent)}
+
+  table{
+    width:100%;border-collapse:collapse;margin:16px 0;font-size:15px;
+  }
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  thead th{background:#f0f3f7;font-weight:600;white-space:nowrap}
+  tbody tr:nth-child(even){background:#fafbfc}
+
+  code{
+    background:#eef1f5;border-radius:4px;padding:1px 5px;font-size:.92em;
+    font-family:"Cascadia Mono",Consolas,"Courier New",monospace;
+    white-space:nowrap;
+  }
+  pre{
+    background:#f6f8fa;border:1px solid var(--line);border-radius:8px;
+    padding:15px 18px;overflow-x:auto;margin:16px 0;
+    font-size:14px;line-height:1.65;
+  }
+  pre code{background:none;padding:0;font-size:inherit;white-space:pre}
+
+  /* 目录结构：用表格而非 <pre>，中英文混排时说明列才能对齐 */
+  table.tree{
+    table-layout:fixed;width:100%;border-collapse:collapse;margin:16px 0;
+    background:#f8fafc;border:1px solid var(--line);border-radius:8px;
+    font-size:14.5px;
+  }
+  table.tree td{padding:4px 10px;border:0;vertical-align:top;line-height:1.8}
+  table.tree tr:first-child td{padding-top:9px}
+  table.tree tr:last-child td{padding-bottom:9px}
+  table.tree tbody tr:hover td{background:#eef3f8}
+  table.tree td.n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  table.tree td.d{color:#5c6773}
+  table.tree .lv1{padding-left:26px}
+  table.tree .lv2{padding-left:52px}
+  table.tree .lv3{padding-left:78px}
+  table.tree .br{color:#a9b4c0}
+  table.tree code{background:none;padding:0;font-size:13.5px}
+
+  .note{
+    background:var(--warn-soft);border-left:4px solid var(--warn-line);
+    border-radius:0 8px 8px 0;padding:11px 16px;margin:16px 0;
+    color:#5b4a12;font-size:15px;
+  }
+  .note p{margin:6px 0}
+
+  dl.faq{margin:6px 0 0}
+  dl.faq dt{font-weight:600;margin-top:20px;color:#1a2028}
+  dl.faq dd{margin:5px 0 0;padding-left:0;color:#3a4450}
+
+  footer{
+    color:var(--muted);font-size:13px;text-align:center;
+    margin-top:30px;line-height:2;
+  }
+  footer .dot{color:#c3ccd6;margin:0 8px}
+
+  @media (max-width:760px){
+    .wrap{padding:22px 12px 44px}
+    main{padding:2px 18px 22px}
+    .toc ol{grid-template-columns:repeat(2,1fr)}
+    header h1{font-size:24px}
+    table{font-size:14px}
+  }
+  @media print{
+    body{background:#fff}
+    .toc{display:none}
+    .wrap{max-width:none;padding:0}
+    main{border:0;padding:0}
+    section{page-break-inside:avoid}
+    a{color:inherit;text-decoration:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>ragqa 使用手册</h1>
+  <p class="lead">ragqa 是一个<strong>完全离线</strong>的 PDF 手册问答工具：把 PDF 手册放进去，用中文提问，
+  它会在手册里找出相关段落，整理成步骤回答你，并把原文那一页高亮出来。</p>
+  <p class="lead">全程不联网，你的问题和文档都不会离开这台电脑。</p>
+  <p class="lead">本手册只讲<strong>怎么使用这个程序</strong>：启动、提问、看答案、翻阅原文、换手册。</p>
+</header>
+
+<nav class="toc">
+  <h2>目录</h2>
+  <ol>
+    <li><a href="#s1">一、第一次打开</a></li>
+    <li><a href="#s2">二、界面说明</a></li>
+    <li><a href="#s3">三、怎么问才答得准</a></li>
+    <li><a href="#s4">四、翻阅手册原文</a></li>
+    <li><a href="#s5">五、关于模型</a></li>
+    <li><a href="#s6">六、换成你自己的 PDF</a></li>
+    <li><a href="#s7">七、常见问题</a></li>
+    <li><a href="#s8">八、文件夹里都是什么</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<section id="s1">
+  <h2>一、第一次打开</h2>
+  <ol>
+    <li>把 <code>ragqa</code> <strong>整个文件夹</strong>拷到电脑上。不要只拷 <code>ragqa.exe</code>——
+      它旁边的 <code>_internal</code>、<code>llama</code>、<code>model</code> 都是运行必需的。</li>
+    <li>双击 <code>ragqa.exe</code>。第一次打开时右边 PDF 区是空的，状态栏提示「请点「打开 PDF…」选择一本手册」——
+      点工具栏「打开 PDF…」，选一本自己的 PDF（也可以选文件夹里的示例手册 <code>userguide.pdf</code>）。</li>
+    <li>状态栏先显示「正在启动 llama-server…」，选完手册后显示「正在为「xxx.pdf」建索引…」，
+      最后变成绿色的「就绪」。第一次总共约 10～25 秒。</li>
+    <li>在左上输入框里打字，按 <strong>Enter</strong> 或点「提问」。
+      第一次问答还要等模型预热，约 8～10 秒；之后每次 4～8 秒（默认 4B 模型）。</li>
+  </ol>
+  <div class="note">
+    <p>想从桌面启动，就给 <code>ragqa.exe</code> 建一个快捷方式。
+      快捷方式只是指路，其他文件仍然留在原文件夹里，不能挪走。</p>
+  </div>
+  <p><strong>第一次打开可能会被 Windows 或杀毒软件拦一下</strong>，因为这个 exe 没有数字签名。
+    选择「仍要运行」即可，程序不联网，可以放心。</p>
+</section>
+
+<section id="s2">
+  <h2>二、界面说明</h2>
+  <p>左边提问、看答案；右边是手册原文，滚动就能翻阅。</p>
+  <table>
+    <thead>
+      <tr><th>位置</th><th>作用</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>左上输入框</td><td>输入问题。<strong>Enter 提交，Shift+Enter 换行</strong>，写多行也没问题</td></tr>
+      <tr><td>「提问」按钮</td><td>和按 Enter 一样。答案生成期间按钮会变灰，此时不能连点</td></tr>
+      <tr><td>答案区</td><td>模型生成的回答。法规类手册会在结论后列出「相关规定」（每条带页码）；普通文档最后一行是「依据：第 N 页」</td></tr>
+      <tr><td>「检索依据」</td><td>从手册里找到的 4 段原文和相似度，<strong>点任意一条</strong>直接跳到那一页</td></tr>
+      <tr><td>右侧 PDF</td><td><strong>滚动即翻页</strong>，转滚轮或拖右侧滚动条都能连续看</td></tr>
+      <tr><td>PDF 顶部</td><td>当前手册名和「当前页 / 总页数」，随手滚动实时更新；右边是「缩小 / 放大」</td></tr>
+      <tr><td>顶部「生成模型」</td><td>显示当前加载的模型名称，见第五节</td></tr>
+      <tr><td>顶部「打开 PDF…」</td><td>换一本要问的手册，选完自动重建索引，见第六节</td></tr>
+      <tr><td>顶部状态栏</td><td>当前模型、手册块数、总页数、上次问答耗时</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="s3">
+  <h2>三、怎么问才答得准</h2>
+  <p>它不是一个闲聊的机器人，而是<strong>照着手册里的原话</strong>回答问题的。所以问法有讲究：</p>
+  <ul>
+    <li><strong>用手册里的词</strong>。问「怎么给作业添加标签」比问「我想给任务分类」更容易命中。</li>
+    <li><strong>一次问一件事</strong>。「怎么新建作业，还有怎么删除」拆成两次问，答案更完整。</li>
+    <li><strong>问操作步骤</strong>效果最好，比如「如何提交作业」「日志在哪里查看」「怎么配置邮箱通知」。</li>
+    <li>问手册里<strong>没有</strong>的内容，它会回答「资料中没有找到相关内容」——这是正常表现，不是故障。</li>
+  </ul>
+  <p>答案下面的「检索依据」是它实际读过的段落。<strong>养成核对的习惯</strong>：
+    点开依据，看看黄底高亮那几行是不是你问的内容。对不上说明检索偏了，换个说法再问一次。</p>
+</section>
+
+<section id="s4">
+  <h2>四、翻阅手册原文</h2>
+  <p>右边的 PDF 是连续滚动的，没有上一页 / 下一页按钮：</p>
+  <ul>
+    <li><strong>转鼠标滚轮</strong>或<strong>拖右侧滚动条</strong>，一路往下翻，可以连续浏览全部页面。</li>
+    <li>顶部页码跟着滚动实时变化，例如「80 / 106」表示当前在第 80 页、共 106 页。</li>
+    <li>页面太小或太大，点右上角<strong>「缩小 / 放大」</strong>，每点一次 15%。</li>
+    <li>在「检索依据」里点某一条，或在答案里点「第 N 页」，会自动跳过去并把命中的句子<strong>黄色高亮</strong>。</li>
+  </ul>
+  <div class="note">
+    <p>只涂跟问题最相关的内容：普通文档一两句，带「第 X 条」的法规标注整条，不会把整页标满；如果涂的位置和问题无关，说明检索没找准，换个说法再问。</p>
+  </div>
+  <p><strong>关于页码</strong>：这里显示的是 PDF 的物理页序。手册自己印的页码可能和它对不上
+    （比如印着「第 74 页」，软件里是第 80 页，因为前面有封面、目录）。<strong>以软件的页码为准。</strong></p>
+</section>
+
+<section id="s5">
+  <h2>五、关于模型</h2>
+  <p>程序预装了三个生成模型，顶部「生成模型」下拉框随时切换，选过的模型下次启动自动沿用：</p>
+  <table>
+    <thead>
+      <tr><th>模型</th><th>大小</th><th>单问耗时</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Qwen3.5-2B</td><td>1.19 GB</td><td>1.5～3.5 秒</td><td>最快；能把单条条文念准，但归纳、判断「资料里到底有没有」的能力较弱</td></tr>
+      <tr><td><strong>Qwen3.5-4B（默认）</strong></td><td>2.55 GB</td><td>4～8 秒</td><td>归纳多句、判断「法条只写了定期、没给具体周期」这类结论明显更稳</td></tr>
+      <tr><td>Qwen3.5-9B</td><td>5.29 GB</td><td>9～14 秒</td><td>最稳健、答得最完整，等待也最久</td></tr>
+    </tbody>
+  </table>
+  <p>默认用 4B：比 2B 多等几秒，但答案会指出「资料里没有直接写」，而不是硬编一段。
+    对速度要求高就切 2B，对准确度要求高就切 9B。</p>
+  <p>如果下拉框里某项后面出现「（未下载）」，说明 <code>model\gguf\</code> 里对应的模型文件被删了，
+    把文件补回去再重启即可；其他模型不受影响。</p>
+</section>
+
+<section id="s6">
+  <h2>六、换成你自己的 PDF 手册</h2>
+  <p>点工具栏的<strong>「打开 PDF…」</strong>，选中你要问的那本 PDF 就行——
+    不必改名，也不必挪动原文件：</p>
+  <ol>
+    <li>点「打开 PDF…」，在对话框里选一本 PDF。</li>
+    <li>状态栏变成「正在为「xxx.pdf」建索引…」，几秒后恢复成绿色的「就绪」。</li>
+    <li>PDF 区顶部会显示新手册的文件名，页码从 1 / 新页数 开始，左边的答案和依据自动清空。</li>
+  </ol>
+  <p><strong>程序会记住这本手册</strong>：下次打开还是它。想换回去，再点一次「打开 PDF…」即可；
+    如果记着的那本被删了或挪走了，下次启动 PDF 区会回到空白，再选一本就行，不会打不开。</p>
+  <p>页数越多建索引越久（106 页约 6～7 秒），期间提问按钮是灰的，等它变绿再问。
+    索引只在运行期间存在内存里，不写文件，所以<strong>不需要清理任何缓存</strong>。</p>
+  <p>几点必须注意：</p>
+  <ul>
+    <li><strong>只能是文字版 PDF</strong>。整页是扫描图片的 PDF 提取不到文字，会提示「PDF 里没有可用文本」。
+      判断方法：用阅读器打开，鼠标能选中文字就是文字版；扫描件需要先做 OCR 转成文字版。</li>
+    <li>中文文档效果最好；英文文档也能用，但用中文提问命中率会下降。</li>
+    <li>适合说明书、操作手册这类结构化文档，单本 100～500 页最舒服。</li>
+    <li>换成别处的文件后，原文件不要随手删——程序记的是它的路径，删了下次启动 PDF 区就空了。</li>
+  </ul>
+</section>
+
+<section id="s7">
+  <h2>七、常见问题</h2>
+  <dl class="faq">
+    <dt>双击 exe 没反应，或者窗口一闪就没了</dt>
+    <dd>先确认文件夹是完整的：<code>ragqa.exe</code> 旁边必须有 <code>_internal</code>、<code>llama</code>、<code>model</code>。
+      只拷一个 exe 是跑不起来的。还不行就看看文件夹里有没有 <code>startup-error.log</code>，里面记了失败原因。</dd>
+
+    <dt>一直卡在「正在加载向量模型并建立索引…」</dt>
+    <dd>首次启动要读向量模型并把整本手册编码一遍，106 页约 7 秒，属正常。
+      如果超过两三分钟没动静，多半是 PDF 太大或没有文字层。</dd>
+
+    <dt>提示「索引失败」，或者状态栏块数是 0</dt>
+    <dd>PDF 没有文字层（扫描件），见第六节。</dd>
+
+    <dt>提示「生成模型启动失败」</dt>
+    <dd>多半是 <code>llama</code> 文件夹缺失，或被安全软件拦截。程序会自动重试一次；
+      仍然失败时，看文件夹里的 <code>llama-server.log</code>。</dd>
+
+    <dt>杀毒软件报毒 / 提示风险</dt>
+    <dd>自打包的程序容易被误报。整个程序不联网，所有文件都在本地，可以加入信任。</dd>
+
+    <dt>答案总是「资料中没有找到相关内容」</dt>
+    <dd>先看「检索依据」是不是空的。空的话是问法和手册用词差太远，换成手册里的原话再试；
+      如果是换了 PDF 之后变成这样，先检查新 PDF 是不是扫描件。</dd>
+
+    <dt>检索很准，但答案只给了一半</dt>
+    <dd>说明这个问题本身太大，拆小一次问一件；也可以把问法换成手册里的原词再试一次。</dd>
+
+    <dt>同时开两个窗口</dt>
+    <dd>不建议。第二个实例会连到同一个后台服务，容易互相干扰。</dd>
+
+    <dt>怎么卸载</dt>
+    <dd>直接删掉整个文件夹就行，不写注册表、不留系统文件。
+      运行时会生成 <code>app.log</code>、<code>llama-server.log</code>、<code>.app.pid</code>、<code>settings.ini</code> 四个文件，删文件夹时一并清掉。</dd>
+  </dl>
+</section>
+
+<section id="s8">
+  <h2>八、文件夹里都是什么</h2>
+  <table class="tree">
+    <colgroup><col style="width:52%"><col style="width:48%"></colgroup>
+    <tbody>
+      <tr>
+        <td class="n"><code>ragqa\</code></td>
+        <td class="d">程序主目录，整个文件夹一起拷</td>
+      </tr>
+      <tr>
+        <td class="n lv1"><span class="br">├─</span> <code>ragqa.exe</code></td>
+        <td class="d">双击运行</td>
+      </tr>
+      <tr>
+        <td class="n lv1"><span class="br">├─</span> <code>ragqa使用手册.html</code></td>
+        <td class="d">就是本说明</td>
+      </tr>
+      <tr>
+        <td class="n lv1"><span class="br">├─</span> <code>userguide.pdf</code></td>
+        <td class="d">示例手册（可选），用顶部「打开 PDF…」选它或换成别处的文件</td>
+      </tr>
+      <tr>
+        <td class="n lv1"><span class="br">├─</span> <code>_internal\</code></td>
+        <td class="d">程序运行库，不要删、不要改名</td>
+      </tr>
+      <tr>
+        <td class="n lv1"><span class="br">├─</span> <code>llama\</code></td>
+        <td class="d">llama.cpp 推理引擎（llama-server.exe 和一批 dll）</td>
+      </tr>
+      <tr>
+        <td class="n lv1"><span class="br">└─</span> <code>model\</code></td>
+        <td class="d">模型目录</td>
+      </tr>
+      <tr>
+        <td class="n lv2"><span class="br">├─</span> <code>bge-small-zh-v1.5\</code></td>
+        <td class="d">中文向量模型，负责找相关段落</td>
+      </tr>
+      <tr>
+        <td class="n lv2"><span class="br">└─</span> <code>gguf\</code></td>
+        <td class="d">生成模型目录</td>
+      </tr>
+      <tr>
+        <td class="n lv3"><span class="br">└─</span> <code>*.gguf</code></td>
+        <td class="d">生成模型（Qwen3.5 2B / 4B / 9B，删掉不用的能省空间）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>运行后还会在同目录生成四个文件：</p>
+  <ul>
+    <li><code>app.log</code>：程序日志，出问题时最先看这个；</li>
+    <li><code>llama-server.log</code>：推理引擎自己的日志；</li>
+    <li><code>.app.pid</code>：记录正在运行的实例，正常退出会自动删除；</li>
+    <li><code>settings.ini</code>：记住上次用的模型和手册，删掉就恢复成第一次打开的样子（PDF 区空白）。</li>
+  </ul>
+  <p><strong>可以删的</strong>：上面那几个日志和记录文件。<br>
+    <strong>不能删的</strong>：<code>_internal\</code>、<code>llama\</code>、<code>model\bge-small-zh-v1.5\</code>。</p>
+  <p>整个文件夹约 2 GB，大头是模型和运行库。<strong>拷给别人时要整个文件夹一起拷</strong>，别只拷 exe。</p>
+</section>
+
+</main>
+
+<footer>
+  ragqa 使用手册<span class="dot">·</span>完全离线运行<span class="dot">·</span>问题与文档均不出本机
+</footer>
+
+</div>
+</body>
+</html>
